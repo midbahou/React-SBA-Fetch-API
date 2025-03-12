@@ -1,6 +1,6 @@
 function GamesList({ games }) {
   return (
-    <div className="lg:grid-cols-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {games.map((game) => {
         const {
           id,
@@ -22,16 +22,16 @@ function GamesList({ games }) {
               className="w-full h-48 rounded-md object-cover"
             />
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+              <p className="text-sm text-gray-400 mb-4">
                 <b>Description: </b>
                 {short_description}
               </p>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-gray-400 mb-4">
                 <b>Genre: </b>
                 {genre}
               </p>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-gray-400 mb-4">
                 <b>Platform: </b>
                 {platform}
               </p>
