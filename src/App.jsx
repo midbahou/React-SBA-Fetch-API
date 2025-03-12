@@ -34,16 +34,28 @@ function App() {
   }, []);
 
   if (loading) {
-    return <h2>Loading...</h2>
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <h2 className="text-2xl font-bold text-gray-700">Loading...</h2>
+      </div>
+    )
   }
 
   if (error) {
-    return <div className="error">Error: {error}</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100"> <div className="text-red-500 text-lg font-semibold">Error: {error}</div>;
+      </div>
+    )
   }
 
   return (
-    <div>
-      <GamesList games={games} />
+    <div className="min-h-screen bg-gray-100 py-8">
+      <div className="container mx-auto px-4">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+          SBA320 - Free-to-Play Games
+        </h1>
+        <GamesList games={games} />
+      </div>
     </div>
   )
 }
