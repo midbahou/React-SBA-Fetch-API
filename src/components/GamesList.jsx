@@ -19,6 +19,7 @@ function GamesList({ games }) {
             <img
               src={thumbnail}
               alt={title}
+              loading="lazy"
               className="w-full h-48 rounded-md object-cover"
             />
             <div className="p-4">
