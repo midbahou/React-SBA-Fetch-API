@@ -57,3 +57,5 @@ Data is fetched from the [FreeToGame API](https://www.freetogame.com/api/games) 
 ## Acknowledgments
 - Thanks to the [FreeToGame](https://www.freetogame.com/) API for providing game data.
 
+## Netlify Link
+- Please check my [Free-to-Play Games Explorer](https://free-to-play-games-by-medbahou.netlify.app/) Netlify Link.
