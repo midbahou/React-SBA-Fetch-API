@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import GamesList from "./components/GamesList";
 import axios from "axios";
+import SearchBar from "./components/SearchBar";
 
 function App() {
   const [games, setGames] = useState([]);
+  const [filteredGames, setFilteredGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   // Create a simple navigation between pages using Pagination
@@ -22,6 +24,7 @@ function App() {
         const gameData = JSON.parse(res.data.contents);
         console.log(gameData);
         setGames(gameData);
+        setFilteredGames(gameData);
       }
     } catch (error) {
       console.error(`Error fetching the data: ${error.message}`);
@@ -30,6 +33,7 @@ function App() {
       setLoading(false);
     }
   };
+  console.log(filteredGames);
 
   useEffect(() => {
     fetchGames();
@@ -51,12 +55,21 @@ function App() {
     );
   }
 
+  // handle search
+  const handleSearch = (search) => {
+    const filtered = games.filter((game) =>
+      game.title.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredGames(filtered); // update filtered games
+    setCurrentPage(1); // reset pagination to the first page
+  }
+
   // Pagination Logic
   const indexOfLastGame = currentPage * gamesPerPage;
   const indexOfFirstGame = indexOfLastGame - gamesPerPage;
   // Using slice() to display only the games for the current page.
-  const currentGames = games.slice(indexOfFirstGame, indexOfLastGame);
-  const totalPages = Math.ceil(games.length / gamesPerPage);
+  const currentGames = filteredGames.slice(indexOfFirstGame, indexOfLastGame);
+  const totalPages = Math.ceil(filteredGames.length / gamesPerPage);
   console.log(totalPages); // 51 pages
 
   const handlePageChange = (page) => {
@@ -64,53 +77,78 @@ function App() {
       setCurrentPage(page);
     }
   }
-  
-  //
 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-8">
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold underline text-center text-gray-800 mb-8">
-          SBA320 - Free-to-Play Games
+          Free-to-Play Games
         </h1>
-        <GamesList games={currentGames} />
+        {/* search bar */}
+        <SearchBar onSearch={handleSearch} />
 
-        {/* Add buttons to navigate between pages. */}
-        <button
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1} // Disable if on the first page
-        className="px-4 py-2 bg-gray-200 rounded-md disabled:bg-gray-100"
+        {/* Clear Search Button */}
+        {filteredGames.length !== games.length && (
+        <button 
+        onClick={() => {
+          setFilteredGames(games); // Reset to all games
+          setCurrentPage(1); // Reset pagination
+
+        }}
+        className="px-4 py-2 mb-4 bg-gray-400 rounded-md hover:bg-gray-300 cursor-pointer"
         >
-          Previous
+      🔄 Clear Search
         </button>
+        )}
 
-        {/* Create an array of buttons for each page number */}
-        {Array.from({ length: totalPages }, (_, i) => {
-          const pageNumber = i + 1; // Calculate the page number (1-based)
-          return(
-            <button
-              key={pageNumber}
-              onClick={() => handlePageChange(pageNumber)} // Navigate to the page when clicked
-              className={
-                currentPage === pageNumber
-                ? "px-4 py-2 rounded-md bg-blue-500 text-white" // Active page style
-                : "px-4 py-2 rounded-md bg-gray-200" // Inactive page style
-              }
-            >
-              {pageNumber} {/* Display the page number */}
-            </button>
+        {/* Display "No games found" message if filteredGames is empty */}
+        {filteredGames.length === 0 && (
+          <p className="text-center text-3xl font-bold text-gray-600 mt-4">😕 No Games Found!</p>
+        )}
+
+        {/* Games List */}
+        {filteredGames.length > 0 && <GamesList games={currentGames} />}
+
+
+        {/* Pagination Control */}
+        <div className="flex flex-wrap justify-center mt-8 space-x-2">
+          {/* Add buttons to navigate between pages. */}
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1} // Disable if on the first page
+            className="px-4 py-2 m-1 bg-gray-400 rounded-md disabled:bg-gray-400 cursor-pointer"
+          >
+            Previous
+          </button>
+
+          {/* Create an array of buttons for each page number */}
+          {Array.from({ length: totalPages }, (_, i) => {
+            const pageNumber = i + 1; // Calculate the page number (1-based)
+            return (
+              <button
+                key={pageNumber}
+                onClick={() => handlePageChange(pageNumber)} // Navigate to the page when clicked
+                className={
+                  currentPage === pageNumber
+                    ? "px-4 py-2 m-1 rounded-md bg-blue-500 text-white cursor-pointer" // Active page style
+                    : "px-4 py-2 m-1 rounded-md bg-gray-400 cursor-pointer" // Inactive page style
+                }
+              >
+                {pageNumber} {/* Display the page number */}
+              </button>
             );
           })}
 
           <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages} // Disable if on the last page
-          className="px-4 py-2 bg-gray-200 rounded-md disabled:bg-gray-100"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages} // Disable if on the last page
+            className="px-4 py-2 m-1 bg-gray-400 rounded-md disabled:bg-gray-400 cursor-pointer"
           >
             Next
           </button>
 
+        </div>
       </div>
     </div>
   );
